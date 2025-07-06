@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إيزي قافية - طلب مشروبات</title>
+    <style>
+<!-- أضف قبل أي أنماط أو سكريبتات أخرى -->
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #6d4c41;
+        }
+        .table-number {
+            margin: 20px 0;
+        }
+        .category {
+            margin: 20px 0;
+            border: 1px solid #ddd;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        .category-title {
+            display: flex;
+            align-items: center;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #5d4037;
+        }
+        .hot-icon {
+            color: red;
+            margin-left: 5px;
+        }
+        .cold-icon {
+            color: blue;
+            margin-left: 5px;
+        }
+        .item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px dashed #eee;
+        }
+        .item-name {
+            flex-grow: 1;
+        }
+        .item-price {
+            margin: 0 10px;
+            color: #388e3c;
+        }
+        .quantity-control {
+            display: flex;
+            align-items: center;
+        }
+        .quantity-btn {
+            width: 25px;
+            height: 25px;
+            border: 1px solid #ddd;
+            background: #f9f9f9;
+            cursor: pointer;
+        }
+        .quantity {
+            margin: 0 10px;
+        }
+        textarea {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .total {
+            font-weight: bold;
+            font-size: 18px;
+            text-align: center;
+            margin: 20px 0;
+            color: #5d4037;
+        }
+        .submit-btn {
+            width: 100%;
+            padding: 12px;
+            background-color: #6d4c41;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        .submit-btn:hover {
+            background-color: #5d4037;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>إيزي قافية</h1>
+        
+        <div class="table-number">
+            <label for="table">رقم الطاولة:</label>
+            <input type="number" id="table" min="1" max="50" required>
+        </div>
+        
+        <div class="category">
+            <div class="category-title">
+                المشروبات الساخنة <span class="hot-icon">🔥</span>
+            </div>
+            
+            <div class="item">
+                <div class="item-name">قهوة تركية</div>
+                <div class="item-price">25 ج.م</div>
+                <div class="quantity-control">
+                    <button class="quantity-btn minus" data-item="قهوة تركية" data-price="25">-</button>
+                    <span class="quantity" data-item="قهوة تركية">0</span>
+                    <button class="quantity-btn plus" data-item="قهوة تركية" data-price="25">+</button>
+                </div>
+            </div>
+            
+            <div class="item">
+                <div class="item-name">شاي بالنعناع</div>
+                <div class="item-price">20 ج.م</div>
+                <div class="quantity-control">
+                    <button class="quantity-btn minus" data-item="شاي بالنعناع" data-price="20">-</button>
+                    <span class="quantity" data-item="شاي بالنعناع">0</span>
+                    <button class="quantity-btn plus" data-item="شاي بالنعناع" data-price="20">+</button>
+                </div>
+            </div>
+            
+            <div class="item">
+                <div class="item-name">كابتشينو</div>
+                <div class="item-price">30 ج.م</div>
+                <div class="quantity-control">
+                    <button class="quantity-btn minus" data-item="كابتشينو" data-price="30">-</button>
+                    <span class="quantity" data-item="كابتشينو">0</span>
+                    <button class="quantity-btn plus" data-item="كابتشينو" data-price="30">+</button>
+                </div>
+            </div>
+            
+            <div class="item">
+                <div class="item-name">نسكافيه 3 في 1</div>
+                <div class="item-price">25 ج.م</div>
+                <div class="quantity-control">
+                    <button class="quantity-btn minus" data-item="نسكافيه 3 في 1" data-price="25">-</button>
+                    <span class="quantity" data-item="نسكافيه 3 في 1">0</span>
+                    <button class="quantity-btn plus" data-item="نسكافيه 3 في 1" data-price="25">+</button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="category">
+            <div class="category-title">
+                المشروبات الباردة <span class="cold-icon">❄️</span>
+            </div>
+            
+            <div class="item">
+                <div class="item-name">عصير برتقال</div>
+                <div class="item-price">35 ج.م</div>
+                <div class="quantity-control">
+                    <button class="quantity-btn minus" data-item="عصير برتقال" data-price="35">-</button>
+                    <span class="quantity" data-item="عصير برتقال">0</span>
+                    <button class="quantity-btn plus" data-item="عصير برتقال" data-price="35">+</button>
+                </div>
+            </div>
+            
+            <div class="item">
+                <div class="item-name">ليمون بالنعناع</div>
+                <div class="item-price">30 ج.م</div>
+                <div class="quantity-control">
+                    <button class="quantity-btn minus" data-item="ليمون بالنعناع" data-price="30">-</button>
+                    <span class="quantity" data-item="ليمون بالنعناع">0</span>
+                    <button class="quantity-btn plus" data-item="ليمون بالنعناع" data-price="30">+</button>
+                </div>
+            </div>
+            
+            <div class="item">
+                <div class="item-name">ميلك شيك فراولة</div>
+                <div class="item-price">40 ج.م</div>
+                <div class="quantity-control">
+                    <button class="quantity-btn minus" data-item="ميلك شيك فراولة" data-price="40">-</button>
+                    <span class="quantity" data-item="ميلك شيك فراولة">0</span>
+                    <button class="quantity-btn plus" data-item="ميلك شيك فراولة" data-price="40">+</button>
+                </div>
+            </div>
+            
+            <div class="item">
+                <div class="item-name">مياه معدنية</div>
+                <div class="item-price">10 ج.م</div>
+                <div class="quantity-control">
+                    <button class="quantity-btn minus" data-item="مياه معدنية" data-price="10">-</button>
+                    <span class="quantity" data-item="مياه معدنية">0</span>
+                    <button class="quantity-btn plus" data-item="مياه معدنية" data-price="10">+</button>
+                </div>
+            </div>
+        </div>
+        
+        <textarea id="notes" placeholder="ملاحظات خاصة (اختياري)"></textarea>
+        
+        <div class="total">
+            الإجمالي: <span id="total-amount">0</span> ج.م
+        </div>
+        
+        <button class="submit-btn" id="submit-order">إرسال الطلب</button>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const quantities = {};
+            let total = 0;
+            
+            // Initialize quantities
+            document.querySelectorAll('.quantity').forEach(q => {
+                const item = q.getAttribute('data-item');
+                quantities[item] = 0;
+            });
+            
+            // Handle plus/minus buttons
+            document.querySelectorAll('.quantity-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const item = this.getAttribute('data-item');
+                    const price = parseInt(this.getAttribute('data-price'));
+                    const quantityElement = document.querySelector(`.quantity[data-item="${item}"]`);
+                    
+                    if (this.classList.contains('plus')) {
+                        quantities[item]++;
+                        total += price;
+                    } else if (this.classList.contains('minus') && quantities[item] > 0) {
+                        quantities[item]--;
+                        total -= price;
+                    }
+                    
+                    quantityElement.textContent = quantities[item];
+                    document.getElementById('total-amount').textContent = total;
+                });
+            });
+            
+            // Submit order
+            document.getElementById('submit-order').addEventListener('click', function() {
+                const tableNumber = document.getElementById('table').value;
+                const notes = document.getElementById('notes').value;
+                
+                if (!tableNumber) {
+                    alert('الرجاء إدخال رقم الطاولة');
+                    return;
+                }
+                
+                if (total === 0) {
+                    alert('الرجاء اختيار مشروب واحد على الأقل');
+                    return;
+                }
+                
+                const order = {
+                    table: tableNumber,
+                    items: [],
+                    notes: notes,
+                    total: total,
+                    timestamp: new Date().toISOString()
+                };
+                
+                for (const item in quantities) {
+                    if (quantities[item] > 0) {
+                        order.items.push({
+                            name: item,
+                            quantity: quantities[item],
+                            price: parseInt(document.querySelector(`.plus[data-item="${item}"]`).getAttribute('data-price'))
+                        });
+                    }
+                }
+                
+                // Here you would send the order to the server
+                console.log('Order submitted:', order);
+                alert(`تم إرسال الطلب للطاولة ${tableNumber}\nالإجمالي: ${total} ج.م`);
+                
+                // Reset form
+                document.getElementById('table').value = '';
+                document.getElementById('notes').value = '';
+                for (const item in quantities) {
+                    quantities[item] = 0;
+                    document.querySelector(`.quantity[data-item="${item}"]`).textContent = '0';
+                }
+                total = 0;
+                document.getElementById('total-amount').textContent = '0';
+            });
+        });
+    </script>
+</body>
+</html>
