@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إيزي قافية - شاشة الإدارة</title>
+    <style>
+    <!-- أضف قبل أي أنماط أو سكريبتات أخرى -->
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #6d4c41;
+        }
+        .tabs {
+            display: flex;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #ddd;
+        }
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            background: #eee;
+            margin-left: 5px;
+            border-radius: 5px 5px 0 0;
+        }
+        .tab.active {
+            background: #6d4c41;
+            color: white;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .order {
+            border: 1px solid #ddd;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 5px;
+            background: #fff9f9;
+        }
+        .order-header {
+            display: flex;
+            justify-content: space-between;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #5d4037;
+        }
+        .order-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 5px 0;
+            border-bottom: 1px dashed #eee;
+        }
+        .order-notes {
+            margin-top: 10px;
+            padding: 10px;
+            background: #f0f0f0;
+            border-radius: 4px;
+        }
+        .order-actions {
+            margin-top: 10px;
+            text-align: left;
+        }
+        .action-btn {
+            padding: 5px 10px;
+            margin-left: 5px;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+        .complete-btn {
+            background-color: #4caf50;
+            color: white;
+        }
+        .cancel-btn {
+            background-color: #f44336;
+            color: white;
+        }
+        .menu-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+        }
+        .menu-controls {
+            display: flex;
+            gap: 10px;
+        }
+        .edit-btn {
+            background-color: #2196f3;
+            color: white;
+        }
+        .delete-btn {
+            background-color: #f44336;
+            color: white;
+        }
+        .add-item-form {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f0f0f0;
+            border-radius: 5px;
+        }
+        .form-group {
+            margin-bottom: 10px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        input, select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .submit-btn {
+            background-color: #6d4c41;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>إيزي قافية - شاشة الإدارة</h1>
+        
+        <div class="tabs">
+            <div class="tab active" data-tab="orders">الطلبات</div>
+            <div class="tab" data-tab="menu">إدارة القائمة</div>
+        </div>
+        
+        <div class="tab-content active" id="orders">
+            <h2>الطلبات النشطة</h2>
+            
+            <div class="order">
+                <div class="order-header">
+                    <span>الطلب #12 - طاولة 5</span>
+                    <span>14:30</span>
+                </div>
+                <div class="order-item">
+                    <span>2x قهوة تركية</span>
+                    <span>50 ج.م</span>
+                </div>
+                <div class="order-item">
+                    <span>1x عصير برتقال</span>
+                    <span>35 ج.م</span>
+                </div>
+                <div class="order-notes">
+                    <strong>ملاحظات:</strong> بدون سكر في القهوة
+                </div>
+                <div class="order-total">
+                    <strong>الإجمالي:</strong> 85 ج.م
+                </div>
+                <div class="order-actions">
+                    <button class="action-btn complete-btn">تم التنفيذ</button>
+                    <button class="action-btn cancel-btn">إلغاء الطلب</button>
+                </div>
+            </div>
+            
+            <div class="order">
+                <div class="order-header">
+                    <span>الطلب #11 - طاولة 3</span>
+                    <span>14:25</span>
+                </div>
+                <div class="order-item">
+                    <span>1x شاي بالنعناع</span>
+                    <span>20 ج.م</span>
+                </div>
+                <div class="order-total">
+                    <strong>الإجمالي:</strong> 20 ج.م
+                </div>
+                <div class="order-actions">
+                    <button class="action-btn complete-btn">تم التنفيذ</button>
+                    <button class="action-btn cancel-btn">إلغاء الطلب</button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="tab-content" id="menu">
+            <h2>قائمة المشروبات</h2>
+            
+            <h3>المشروبات الساخنة</h3>
+            <div class="menu-item">
+                <span>قهوة تركية - 25 ج.م</span>
+                <div class="menu-controls">
+                    <button class="action-btn edit-btn">تعديل</button>
+                    <button class="action-btn delete-btn">حذف</button>
+                </div>
+            </div>
+            <div class="menu-item">
+                <span>شاي بالنعناع - 20 ج.م</span>
+                <div class="menu-controls">
+                    <button class="action-btn edit-btn">تعديل</button>
+                    <button class="action-btn delete-btn">حذف</button>
+                </div>
+            </div>
+            <div class="menu-item">
+                <span>كابتشينو - 30 ج.م</span>
+                <div class="menu-controls">
+                    <button class="action-btn edit-btn">تعديل</button>
+                    <button class="action-btn delete-btn">حذف</button>
+                </div>
+            </div>
+            
+            <h3>المشروبات الباردة</h3>
+            <div class="menu-item">
+                <span>عصير برتقال - 35 ج.م</span>
+                <div class="menu-controls">
+                    <button class="action-btn edit-btn">تعديل</button>
+                    <button class="action-btn delete-btn">حذف</button>
+                </div>
+            </div>
+            <div class="menu-item">
+                <span>ليمون بالنعناع - 30 ج.م</span>
+                <div class="menu-controls">
+                    <button class="action-btn edit-btn">تعديل</button>
+                    <button class="action-btn delete-btn">حذف</button>
+                </div>
+            </div>
+            
+            <div class="add-item-form">
+                <h3>إضافة صنف جديد</h3>
+                <div class="form-group">
+                    <label for="item-name">اسم الصنف:</label>
+                    <input type="text" id="item-name" required>
+                </div>
+                <div class="form-group">
+                    <label for="item-price">السعر (ج.م):</label>
+                    <input type="number" id="item-price" min="1" required>
+                </div>
+                <div class="form-group">
+                    <label for="item-type">النوع:</label>
+                    <select id="item-type">
+                        <option value="hot">مشروب ساخن</option>
+                        <option value="cold">مشروب بارد</option>
+                    </select>
+                </div>
+                <button class="submit-btn" id="add-item">إضافة الصنف</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Tab switching
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.addEventListener('click', function() {
+                    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                    
+                    this.classList.add('active');
+                    document.getElementById(this.getAttribute('data-tab')).classList.add('active');
+                });
+            });
+            
+            // Order actions
+            document.querySelectorAll('.complete-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const order = this.closest('.order');
+                    order.style.opacity = '0.5';
+                    order.style.backgroundColor = '#e8f5e9';
+                    setTimeout(() => {
+                        order.remove();
+                    }, 1000);
+                });
+            });
+            
+            document.querySelectorAll('.cancel-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const order = this.closest('.order');
+                    order.style.opacity = '0.5';
+                    order.style.backgroundColor = '#ffebee';
+                    setTimeout(() => {
+                        order.remove();
+                    }, 1000);
+                });
+            });
+            
+            // Add new menu item
+            document.getElementById('add-item').addEventListener('click', function() {
+                const name = document.getElementById('item-name').value;
+                const price = document.getElementById('item-price').value;
+                const type = document.getElementById('item-type').value;
+                
+                if (!name || !price) {
+                    alert('الرجاء إدخال اسم الصنف والسعر');
+                    return;
+                }
+                
+                // Here you would send the data to the server
+                console.log('New item:', {name, price, type});
+                alert(`تم إضافة ${name} إلى القائمة`);
+                
+                // Reset form
+                document.getElementById('item-name').value = '';
+                document.getElementById('item-price').value = '';
+            });
+        });
+    </script>
+</body>
+</html>
